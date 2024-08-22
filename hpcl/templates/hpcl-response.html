@@ -32,15 +32,7 @@
                         <h5>Current Rank </h5>
                     </div>
                 </div>
-                <div class="analysis">
-                    <div class="analysis-left">
-                        <img src="{% static "assets/img/top-three.png" %}">
-                    </div>
-                    <div class="analysis-right">
-                        <h4>{{ data.RankInStudentCategory }} / {{ data.TotalStudentCategory }}</h4>
-                        <h5>Current Rank({{data.StudentCategory}})</h5>
-                    </div>
-                </div>
+                
                 <div class="analysis">
                     <div class="analysis-left">
                         <img src="{% static "assets/img/button.png" %}">
@@ -50,7 +42,8 @@
                         <h5>Total Marks</h5>
                     </div>
                 </div>
-                <!--<div class="analysis">
+
+                <div class="analysis">
                     <div class="analysis-left">
                         <img src="{% static "assets/img/check-mark.png" %}">
                     </div>
@@ -58,14 +51,14 @@
                         <h4>{{ data.TotalMarks }}</h4>
                         <h5>Normalised Marks</h5>
                     </div>
-                </div>-->
+                </div>
                 <div class="analysis">
                     <div class="analysis-left">
                         <img src="{% static "assets/img/examination.png" %}">
                     </div>
                     <div class="analysis-right">
-                        <h4>{{data.ExpectedJrfCutoff}}</h4>
-                        <h5>Approx. JRF Cutoff({{ data.StudentCategory }})</h5>
+                        <h4>{{data.PositiveMarksinPaper}}</h4>
+                        <h5>Positive Marks</h5>
                     </div>
                 </div>
                 <div class="analysis">
@@ -73,10 +66,11 @@
                         <img src="{% static "assets/img/examination.png" %}">
                     </div>
                     <div class="analysis-right">
-                        <h4>{{data.ExpectedNetCutOff}}</h4>
-                        <h5>Approx. NET Cutoff({{ data.StudentCategory }})</h5>
+                        <h4>{{data.NegativeMarksinPaper}}</h4>
+                        <h5>Negative Marks</h5>
                     </div>
                 </div>
+            
             </div>
 
             <div class="marks-analysis">
@@ -84,43 +78,37 @@
                     <table class="custom-table">
                         <tr>
                             <th></th>
-                            <th>Paper 1</th>
-                            <th>Paper 2</th>
+                            <th>Paper</th>
                             <th>Total</th>
                         </tr>
     
                         <tr>
                             <td>Attempted</td>
-                            <td>{{ data.AttemptedQuestionPaper1 }} / {{ data.TotalQuestionInPaper1 }}</td>
-                            <td>{{ data.AttemptedQuestionPaper2 }} / {{ data.TotalQuestionInPaper2 }} </td>
+                            <td>{{ data.AttemptedQuestionPaper }} / {{ data.TotalQuestionInPaper }}</td>
                             <td>{{ data.TotalQuestionAttempted }} / {{ data.TotalQuestionInPaper }}</td>
                         </tr>
     
                         <tr>
                             <td>Correct</td>
-                            <td>{{ data.CorrectQuestionPaper1 }}</td>
-                            <td>{{ data.CorrectQuestionPaper2 }}</td>
+                            <td>{{ data.TotalCorrectQuestion }}</td>
                             <td>{{ data.TotalCorrectQuestion }}</td>
                         </tr>
     
                         <tr>
                             <td>+ve</td>
-                            <td>{{ data.PositiveMarksinPaper1 }}</td>
-                            <td>{{ data.PositiveMarksinPaper2 }}</td>
+                            <td>{{ data.PositiveMarksinPaper }}</td>
                             <td>{{ data.TotalPositiveMarks }}</td>
                         </tr>
     
                         <tr>
                             <td>-ve</td>
-                            <td>{{ data.NegativeMarksinPaper1 }}</td>
-                            <td>{{ data.NegativeMarksinPaper2 }}</td>
+                            <td>{{ data.NegativeMarksinPaper }}</td>
                             <td>{{ data.TotalNegativeMarks }}</td>
                         </tr>
     
                         <tr>
                             <td>Total Marks</td>
-                            <td>{{ data.TotalMarksPaper1 }}</td>
-                            <td>{{ data.TotalMarksPaper2 }}</td>
+                            <td>{{ data.TotalMarksPaper }}</td>
                             <td>{{ data.TotalMarks }}</td>
                         </tr>
                     </table>
@@ -131,17 +119,17 @@
                         <h4>Qualifying Marks</h4>
                     </div>
                     <div class="qualifying-category">
-                            <h4> 80 </h4>
+                            <h4> 125 </h4>
                             <p> General</p>
                     </div>
 
                     <div class="qualifying-category">
-                        <h4> 70 </h4>
+                        <h4> 123 </h4>
                         <p> OBC(NCL)/EWS</p>
                     </div>
 
                     <div class="qualifying-category">
-                        <h4> 70 </h4>
+                        <h4> 115 </h4>
                         <p> SC/ST/PWD</p>
                     </div>
                 </div>

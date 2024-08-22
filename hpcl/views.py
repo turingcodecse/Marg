@@ -53,21 +53,79 @@ def HPCLexamrank(request):
                 soup = BeautifulSoup(response.text, 'lxml')
 
                 response_tables = soup.find_all('table', {'class': 'menu-tbl'})
+                right_answers = soup.find_all('td', class_='rightAns')
             except Exception as e:
                 print("the problem is ",e)
 
-            AttemptedQuestionPaper1 = 0
-            AttemptedQuestionPaper2 = 0
-            CorrectQuestionPaper1 = 0
-            CorrectQuestionPaper2 = 0
-            PositiveMarksinPaper1 = 0
-            PositiveMarksinPaper2 = 0
-            NegativeMarksinPaper1 = 0
-            NegativeMarksinPaper2 = 0
+            TotalQuestion = 170
+            AttemptedQuestionPaper = 0
+            CorrectQuestionPaper = 0
+            PositiveMarksinPaper = 0
+            NegativeMarksinPaper = 0
 
-            print("hello hello")
+            '''for response_table in response_tables:
+                 table_data = extract_table_data(response_table)
+                 print("question id",table_data.get('Question ID ', ''))
+                 print("choose options :",table_data.get('Chosen Option', ''))
+            '''
+            #for i, answer in enumerate(right_answers, start=1):
+            #    print(f"Answer {i}: {answer.get_text(strip=True)}")
+            
+            '''
+            for i, answer in enumerate(right_answers, start=1):
+                text_content = answer.get_text(strip=True)
+                first_char = text_content[0] if text_content else ''
+                print(f"Answer {i}: {first_char}")
+            '''
 
-            for response_table in response_tables:
+            # Assuming response_tables and right_answers are lists of the same length
+
+
+            for i, (response_table, answer) in enumerate(zip(response_tables, right_answers), start=1):
+                # Extract data from the current table
+                table_data = extract_table_data(response_table)
+                #print("Question ID:", table_data.get('Question ID ', ''))
+                #print("Chosen Options:", table_data.get('Chosen Option', ''))
+                #print("Status =",table_data.get('Status :', ''))
+                
+                # Process the current <td> element
+                text_content = answer.get_text(strip=True)
+                first_char = text_content[0] if text_content else ''
+                #print(f"Answer {i}: {first_char}")
+
+                #check question is attempted or not
+                if str(table_data.get('Chosen Option', '')) != '--':
+                    AttemptedQuestionPaper = AttemptedQuestionPaper + 1
+
+                    if str(first_char) == str(table_data.get('Chosen Option', '')):
+                        CorrectQuestionPaper = CorrectQuestionPaper + 1
+                        PositiveMarksinPaper = PositiveMarksinPaper + 1
+                    else:
+                        NegativeMarksinPaper = NegativeMarksinPaper + 0.25
+                    
+            
+            #print("AttemptedQuestionPaper =", AttemptedQuestionPaper)
+            #print("PositiveMarksinPaper",PositiveMarksinPaper)
+            #print("NegativeMarksinPaper",NegativeMarksinPaper)
+            #print("Total Marks = ",PositiveMarksinPaper - NegativeMarksinPaper )
+            #print("Correct Questions = ", CorrectQuestionPaper)
+            #print("InCorrect Questions = ", AttemptedQuestionPaper - CorrectQuestionPaper)
+
+
+
+            response_tables = soup.find_all('table', {'class': 'menu-tbl'})
+            right_answers = soup.find_all('td', class_='rightAns')
+            for i, (response_table, answer) in enumerate(zip(response_tables, right_answers), start=1):
+
+                text_content = answer.get_text(strip=True)
+                first_char = text_content[0] if text_content else ''
+                print(f"Answer {i}: {first_char}")
+
+                table_data = extract_table_data(response_table)
+                print("question id",table_data.get('Question ID ', ''))
+                print("choose options :",table_data.get('Chosen Option', ''))
+
+
                 # Extract data from the table
                 table_data = extract_table_data(response_table)
 
@@ -78,39 +136,6 @@ def HPCLexamrank(request):
                 # Print the extracted data for debugging
                 #print("Extracted Data:", table_data)
 
-                #get the data of current question
-                ugcnetanswerkey = HPCLAnswerKey.objects.get(question_id=str(table_data.get('Question ID ', '')),ugcnetexam = ugcnetstudent.ugcnetexam)
-
-                CurrentQuesAnswer = ugcnetanswerkey.answer.split(" or ")
-
-                #check if question is attempted or not
-                if table_data.get('Status ','') == 'Answered':
-                    if ugcnetanswerkey.paper == 1:
-                        AttemptedQuestionPaper1 += 1
-
-                        if str(table_data.get('Chosen Option', '')) in CurrentQuesAnswer or str(ugcnetanswerkey.answer) == 'MTA':
-                            CorrectQuestionPaper1 += 1
-                            PositiveMarksinPaper1 += ugcnetanswerkey.positive_marks
-                        else:
-                            NegativeMarksinPaper1 += ugcnetanswerkey.negative_marks
-
-                    if ugcnetanswerkey.paper == 2:
-                        AttemptedQuestionPaper2 = AttemptedQuestionPaper2 + 1
-
-                        if str(table_data.get('Chosen Option', '')) in CurrentQuesAnswer or str(ugcnetanswerkey.answer) == 'MTA':
-                            CorrectQuestionPaper2 += 1
-                            PositiveMarksinPaper2 += ugcnetanswerkey.positive_marks
-                        else:
-                            NegativeMarksinPaper2 += ugcnetanswerkey.negative_marks
-                else:
-                    if str(ugcnetanswerkey.answer) == 'MTA':
-                        if ugcnetanswerkey.paper == 1:
-                            CorrectQuestionPaper1 += 1
-                            PositiveMarksinPaper1 += ugcnetanswerkey.positive_marks
-                        
-                        if ugcnetanswerkey.paper == 2:   
-                            CorrectQuestionPaper2 += 1
-                            PositiveMarksinPaper2 += ugcnetanswerkey.positive_marks
 
                 td_element = soup.find('td',text=str(table_data.get('Question ID ', '')))
                 
@@ -121,7 +146,7 @@ def HPCLexamrank(request):
                     # Check if the table is found
                     if table_to_modify:
                         #print("Question ID = ",str(table_data.get('Question ID ', '')),"   Choice Option = ",str(table_data.get('Chosen Option', '')),"     Correct Answer = ",ugcnetanswerkey.answer)
-                        if ugcnetanswerkey.answer == str(table_data.get('Chosen Option', '')) or str(ugcnetanswerkey.answer) == 'MTA':
+                        if str(table_data.get('Chosen Option', '')) != '--' and str(first_char) == str(table_data.get('Chosen Option', '')):
                             # Change the border color of the table
                             table_to_modify['style'] = 'border: 2px solid green;'
 
@@ -136,8 +161,8 @@ def HPCLexamrank(request):
                             # Create new td element with text content, class="bold" attribute, and style attributes
                             td_plus_two = soup.new_tag('td', class_='bold', style='font-size: 16px; font-weight:bold; color: green;')
 
-                            td_plus_two.append('+'+str(ugcnetanswerkey.positive_marks))
-                        else:
+                            td_plus_two.append('+ 1')
+                        elif str(table_data.get('Chosen Option', '')) != '--' and str(first_char) != str(table_data.get('Chosen Option', '')):
                             # Change the border color of the table
                             table_to_modify['style'] = 'border: 2px solid red;'
 
@@ -152,7 +177,24 @@ def HPCLexamrank(request):
                             # Create new td element with text content, class="bold" attribute, and style attributes
                             td_plus_two = soup.new_tag('td', class_='bold', style='font-size: 16px; font-weight:bold; color: red;')
 
-                            td_plus_two.append('-'+str(ugcnetanswerkey.negative_marks))
+                            td_plus_two.append('-0.25')
+
+                        else:
+                              # Change the border color of the table
+                            table_to_modify['style'] = 'border: 2px solid red;'
+
+                            # Create a new tr element with the desired content
+                            new_tr = soup.new_tag('tr')
+
+                        
+                            # Create new td element with text content, align="right" attribute, and style attributes
+                            td_marks = soup.new_tag('td', align='right', style='font-size: 16px;font-weight:bold; color: ;')
+                            td_marks.append('Your Marks:')
+                            
+                            # Create new td element with text content, class="bold" attribute, and style attributes
+                            td_plus_two = soup.new_tag('td', class_='bold', style='font-size: 16px; font-weight:bold; color: ;')
+
+                            td_plus_two.append('0')
 
 
                         # Append the new td elements to the new tr element
@@ -175,9 +217,11 @@ def HPCLexamrank(request):
                 if img_src and not img_src.startswith(('http://', 'https://')):
                     img_tag['src'] = urljoin(url, img_src)
             
-            Attempted = AttemptedQuestionPaper1 + AttemptedQuestionPaper2
-            TotalMarks = (PositiveMarksinPaper1 + PositiveMarksinPaper2) - (NegativeMarksinPaper1 + NegativeMarksinPaper2)
-            TotalCorrect = CorrectQuestionPaper1 + CorrectQuestionPaper2
+            
+            
+            Attempted = AttemptedQuestionPaper
+            TotalMarks = PositiveMarksinPaper  - NegativeMarksinPaper
+            TotalCorrect = CorrectQuestionPaper
 
             #if same data then not save other change 
             if ugcnetstudent.total_marks != TotalMarks or ugcnetstudent.question_attempted != Attempted or ugcnetstudent.correct_question != TotalCorrect:
@@ -187,55 +231,29 @@ def HPCLexamrank(request):
                 ugcnetstudent.save()
 
             
-            RankInStudentCategory = HPCLStudent.objects.filter(category=ugcnetstudent.category, total_marks__gt=TotalMarks).values('roll_no').distinct().count()
             Rank = HPCLStudent.objects.filter(total_marks__gt=TotalMarks).values('roll_no').distinct().count()
 
-            TotalStudent = HPCLStudent.objects.filter(ugcnetexam = ugcnetstudent.ugcnetexam).values('roll_no').distinct().count()
-            TotalStudentCategory = HPCLStudent.objects.filter(category=ugcnetstudent.category,ugcnetexam = ugcnetstudent.ugcnetexam).values('roll_no').distinct().count()
-            
-            if ugcnetstudent.category == 'UNRESERVED' or ugcnetstudent.category == 'EWS' or ugcnetstudent.category == 'OBC(NCL)' or ugcnetstudent.category == 'SC':
-                ExpectedCutoff = HPCLExpectedCutOff.objects.filter(Q(category='UNRESERVED') | Q(category='OBC(NCL)') | Q(category='EWS') | Q(category='SC') ,ugcnetexam=ugcnetstudent.ugcnetexam)
-            else:
-                ExpectedCutoff = HPCLExpectedCutOff.objects.filter(Q(category='UNRESERVED') | Q(category='OBC(NCL)') | Q(category='EWS') | Q(category=str(ugcnetstudent.category)) ,ugcnetexam=ugcnetstudent.ugcnetexam)
-            
-            #count total question in paper 1 
-            TotalQuestionInPaper1 = HPCLAnswerKey.objects.filter(ugcnetexam=ugcnetstudent.ugcnetexam,paper = 1).count()
 
-            #count total question in paper 2
-            TotalQuestionInPaper2 = HPCLAnswerKey.objects.filter(ugcnetexam=ugcnetstudent.ugcnetexam, paper = 2).count()
+            TotalStudent = HPCLStudent.objects.filter(HPCLexam = ugcnetstudent.HPCLexam).values('roll_no').distinct().count()
+            
 
-            #user category expected cutoff for JRF
-            StudentCategoryCutoff = HPCLExpectedCutOff.objects.get(category=str(ugcnetstudent.category),ugcnetexam=ugcnetstudent.ugcnetexam)
+            print('this rank predictor now work fine 144')
 
             data = {
-                    'AttemptedQuestionPaper1': AttemptedQuestionPaper1,
-                    'AttemptedQuestionPaper2' : AttemptedQuestionPaper2,
+                    'AttemptedQuestionPaper': AttemptedQuestionPaper,
                     'TotalQuestionAttempted' : Attempted,
-                    'CorrectQuestionPaper1' : CorrectQuestionPaper1,
-                    'CorrectQuestionPaper2' : CorrectQuestionPaper2,
+                    'CorrectQuestionPaper1' : CorrectQuestionPaper,
                     'TotalCorrectQuestion': TotalCorrect,
-                    'IncorrectQuestionPaper1' : AttemptedQuestionPaper1 - CorrectQuestionPaper1,
-                    'IncorrectQuestionPaper2' : AttemptedQuestionPaper2 - CorrectQuestionPaper2,
-                    'TotalMarksPaper1' : PositiveMarksinPaper1 - NegativeMarksinPaper1,
-                    'TotalMarksPaper2':PositiveMarksinPaper2 - NegativeMarksinPaper2,
-                    'PositiveMarksinPaper1' :PositiveMarksinPaper1,
-                    'PositiveMarksinPaper2':PositiveMarksinPaper2,
-                    'NegativeMarksinPaper1':NegativeMarksinPaper1,
-                    'NegativeMarksinPaper2':NegativeMarksinPaper2,
-                    'TotalPositiveMarks':PositiveMarksinPaper1 + PositiveMarksinPaper2,
-                    'TotalNegativeMarks':NegativeMarksinPaper1 + NegativeMarksinPaper2,
-                    'TotalQuestionInPaper1':TotalQuestionInPaper1,
-                    'TotalQuestionInPaper2':TotalQuestionInPaper2,
-                    'TotalQuestionInPaper' : TotalQuestionInPaper1 + TotalQuestionInPaper2,
+                    'IncorrectQuestionPaper' : AttemptedQuestionPaper - CorrectQuestionPaper,
+                    'TotalMarksPaper' : PositiveMarksinPaper,
+                    'PositiveMarksinPaper' :PositiveMarksinPaper,
+                    'NegativeMarksinPaper':NegativeMarksinPaper,
+                    'TotalPositiveMarks':PositiveMarksinPaper,
+                    'TotalNegativeMarks':NegativeMarksinPaper,
+                    'TotalQuestionInPaper':TotalQuestion,
                     'TotalMarks' : TotalMarks,
-                    'ExpectedCutoff':ExpectedCutoff,
-                    'RankInStudentCategory':RankInStudentCategory + 1,
                     'Rank':Rank + 1,
                     'TotalStudent':TotalStudent,
-                    'TotalStudentCategory' : TotalStudentCategory,
-                    'StudentCategory':ugcnetstudent.category,
-                    'ExpectedNetCutOff': StudentCategoryCutoff.assistant_professor,
-                    'ExpectedJrfCutoff' : StudentCategoryCutoff.jrf,
             }
 
 
@@ -275,7 +293,7 @@ def HPCLStudentData(request):
             # Extract data from the POST request
             email = request.POST.get('email')
             mobile = request.POST.get('mobile')
-            category = request.POST.get('category')
+            category = 'EWS'
             url = request.POST.get('url')
             examname = request.POST.get('examname')
             subject = request.POST.get('subject')
@@ -285,6 +303,8 @@ def HPCLStudentData(request):
 
             # Send email verification OTP
             otp = generate_otp()
+
+            print("rank work")
             #send_otp_email(email, otp)
             
             try:
@@ -298,8 +318,11 @@ def HPCLStudentData(request):
                 response.raise_for_status()
 
 
+
                     # Parse the HTML content of the page
                 soup = BeautifulSoup(response.text, 'html.parser')
+
+               
 
                 # Extract data for UgcNetStudent
                 student_table = soup.find('table', {'border': '1', 'cellpadding': '1', 'cellspacing': '1', 'style': 'width:500px'})
@@ -307,7 +330,7 @@ def HPCLStudentData(request):
 
                 ugc_net_student_data = {}
 
-
+                
                 for row in rows:
                     columns = row.find_all('td')
                     if len(columns) == 2:
@@ -329,7 +352,7 @@ def HPCLStudentData(request):
                     #store data in database if user check rank first time
                     # Create UgcNetStudent instance and save to the database
                     ugc_net_student = HPCLStudent.objects.create(
-                        ugcnetexam = currentexam,
+                        HPCLexam = currentexam,
                         email = email,
                         mobile = mobile,
                         category = category,

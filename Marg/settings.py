@@ -144,3 +144,6 @@ EMAIL_USE_TLS = True  # Or False, depending on your email provider
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+#AKIA2HVQ5UTPYQACMPMB
+#Q4LO3dJ/Zbo1H7w71/19iEjJu4r52XqJF1hgfYwS

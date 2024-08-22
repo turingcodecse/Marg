@@ -149,14 +149,14 @@
         // Get the CSRF token from the cookie
         $.ajax({
             type: 'POST',
-            url: '/ugcnet-student-save/',
+            url: '/hpcl-student-save/',
             data: {
                 'email': $("input[name='email']").val(),
                 'mobile': $("input[name='mobile']").val(),
                 'category': $("select[name='category']").val(),
                 'url': $("input[name='url']").val(),
-                'examname': 'UGC NET December 2023',
-                'subject': '87 Computer Science and Applications',
+                'examname': 'HPCL 2024',
+                'subject': 'Chemical Engineering',
                 'shift': 'Morning',
                 'csrfmiddlewaretoken': getCookie('csrftoken')
             },
