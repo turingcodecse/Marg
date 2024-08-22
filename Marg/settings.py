@@ -24,10 +24,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-6x62hwd7quw2w*h$ey5lh@693(%^6xw95kmi2-u)_90l9dzv&@'
+SECRET_KEY = 'django-insecure-opb+ji1ukz^!4(n9_dc8apofsdk8rko(z!9skn$9l!a+31n)1%'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -123,14 +123,11 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'StaticFiles')
+# Default primary key field type
+# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'staticfiles')
-]
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Email backend settings (for example, using Gmail)
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -139,11 +136,3 @@ EMAIL_PORT = 587  # Change the port according to your email provider
 EMAIL_HOST_USER = 'margdarshanbyiitians@gmail.com'  # Your email address
 EMAIL_HOST_PASSWORD = 'rmjz rrpf strp aegu'  # Your email password
 EMAIL_USE_TLS = True  # Or False, depending on your email provider
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
-
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-#AKIA2HVQ5UTPYQACMPMB
-#Q4LO3dJ/Zbo1H7w71/19iEjJu4r52XqJF1hgfYwS
